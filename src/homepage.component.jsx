@@ -5,6 +5,10 @@ const newFeature = function() {
   console.log('Welcome to the application!')
 }
 
+function customizeProduct(id, num) {
+  console.log(`${num} of ${id} products are in your cart.`);
+}
+
 const HomePage = () => (
   <div className="homepage">
     <div className="directory-menu">
@@ -52,5 +56,7 @@ const HomePage = () => (
     </div>
   </div>
 );
+
+customizeProduct()
 
 export default HomePage;
