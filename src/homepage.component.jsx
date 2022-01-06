@@ -1,13 +1,5 @@
 import React from "react";
-import "./homepage-styles/homepage.styles.css";
-
-const newFeature = function() {
-  console.log('Welcome to the application!')
-}
-
-function customizeProduct(id, num) {
-  console.log(`${num} of ${id} products are in your cart.`);
-}
+import "./homepage.styles.scss";
 
 const HomePage = () => (
   <div className="homepage">
@@ -18,13 +10,6 @@ const HomePage = () => (
           <span>SHOP NOW</span>
         </div>
       </div>
-
-      {/* <h3 className="">
-        Something TO ChEcK Lorem ipsum dolor, sit amet consectetur adipisicing
-        elit. Tenetur ad nobis praesentium id fuga, necessitatibus nihil veniam,
-        natus ratione dignissimos officiis fugit doloribus omnis eum. A debitis
-        necessitatibus et id!
-      </h3> */}
 
       <div className="menu-item">
         <div className="content">
@@ -56,7 +41,5 @@ const HomePage = () => (
     </div>
   </div>
 );
-
-customizeProduct()
 
 export default HomePage;
