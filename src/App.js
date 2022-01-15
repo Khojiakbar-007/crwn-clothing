@@ -1,23 +1,34 @@
 import React from "react";
-import { Switch, Route } from "react-router-dom";
+import { Route } from "react-router-dom";
 
 import "./App.css";
 import HomePage from "./pages/homepage/homepage.component";
 
-const HatsPage = () => (
+const HatsPage = (props) => {
+  console.log(props);
+  return (
+    <div>
+      <h1>Hats Page</h1>
+    </div>
+  );
+};
+
+const PageWithID = () => (
   <div>
-    <h1>Hats Page</h1>
+    <h1>Page with ID</h1>
   </div>
 );
 
 function App() {
   return (
     <div>
-      <Switch>
-        <Route /* exact={false}  */path={"/"} component={HomePage}></Route>
+      {/* <Switch> */}
+      <Route exact={true} path={"/"} component={HomePage}></Route>
 
-        <Route path={"/hats"} component={HatsPage}></Route>
-      </Switch>
+      <Route path={"/shop/hats"} component={HatsPage}></Route>
+
+      <Route path={"/shop/hats/:something"} component={PageWithID}></Route>
+      {/* </Switch> */}
     </div>
   );
 }
