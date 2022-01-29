@@ -4,6 +4,18 @@ import { getAuth } from "firebase/auth";
 import { GoogleAuthProvider } from "firebase/auth";
 import { signInWithPopup } from "firebase/auth";
 
+import {
+  firestore,
+  getFirestore,
+  collection,
+  getDocs,
+  getDoc,
+  setDoc,
+  doc,
+  deleteDoc,
+} from "firebase/firestore";
+import { useRef } from "react";
+
 const config = {
   apiKey: "AIzaSyCNSwSLO-yc3LcTGBlGCP95W-NJKK9kHuI",
   authDomain: "my-crwn-shop-db.firebaseapp.com",
@@ -14,7 +26,8 @@ const config = {
   measurementId: "G-S2T40TLVVS",
 };
 
-const firebaseApp = initializeApp(config);
+export const firebaseApp = initializeApp(config);
+export const db = getFirestore();
 
 export const auth = getAuth(firebaseApp);
 
@@ -28,7 +41,7 @@ provider.setCustomParameters({
 export const signInWithGoogle = async function () {
   try {
     const res = await signInWithPopup(auth, provider);
-    console.log(res);
+    // console.log(res);
 
     // const credential = GoogleAuthProvider.credentialFromResult(res);
     // const token = credential.accessToken;
@@ -36,7 +49,6 @@ export const signInWithGoogle = async function () {
 
     // console.log(token, "\n", user);
   } catch (error) {
-    // Handle Errors here.
     const errorCode = error.code;
     // const errorMessage = error.message;
     // // The email of the user's account used.
@@ -48,4 +60,61 @@ export const signInWithGoogle = async function () {
   }
 };
 
-// time 13:12
+// FIRESTORE
+
+export const createUserProfileDocument = async (userAuth, otherData) => {
+  if (!userAuth) return;
+
+  const docRef = doc(db, `users/${userAuth.uid}`);
+  const snapShot = await getDoc(docRef);
+  console.log(
+    "Working",
+    snapShot,
+    snapShot.exists(),
+    "User Auth",
+    userAuth,
+    "\nUser auth user: ",
+    userAuth.user
+  );
+
+  if (!snapShot.exists()) {
+    const createdAt = new Date();
+
+    // const { displayName, email } = userAuth.user;
+    // let email = '';
+    // email = await userAuth.email;
+    // email = await userAuth.user?.email;
+    // console.log(
+    //   "User Auth: ",
+    //   userAuth /* "Display name: ", displayName,  "email: ", email*/
+    // );
+    // console.log("\n other data: ", otherData);
+    try {
+      await setDoc(
+        docRef,
+        {
+          displayName:
+            userAuth?.displayName ||
+            otherData?.displayName ||
+            userAuth?.user?.displayName ||
+            null,
+          email: userAuth?.email || userAuth?.user?.email || null,
+          createdAt,
+          ...otherData,
+        },
+        {
+          merge: true,
+        }
+      );
+      console.log("Document reference: ", docRef, "\n other data: ", otherData);
+    } catch (error) {
+      console.log(`Error creating user:`);
+      console.log(error);
+    }
+  }
+
+  console.log("Working", snapShot, snapShot.exists());
+  return docRef;
+};
+
+// 12:42

@@ -6,7 +6,12 @@ import HomePage from "./pages/homepage/homepage.component";
 import ShopPage from "./pages/shop/shop.component";
 import SignInAndSignUpPage from "./pages/sign-in-and-sign-up/sign-in-and-sign-up.component";
 import Header from "./components/header/header.component";
-import { auth } from "./firebase/firebase.utils";
+import { auth, createUserProfileDocument } from "./firebase/firebase.utils";
+// import { createUserWithEmailAndPassword } from "firebase/auth";
+
+import { getDoc } from "firebase/firestore";
+
+import "./test";
 
 class App extends React.Component {
   constructor() {
@@ -14,27 +19,34 @@ class App extends React.Component {
 
     this.state = {
       currentUser: null,
-      checker: 0,
     };
-    // this.unsubscribeFromAuth = null;
   }
 
   unsubscribeFromAuth = null;
 
   componentDidMount() {
-    this.unsubscribeFromAuth = auth.onAuthStateChanged((user) => {
-      this.setState({
-        currentUser: user,
-      });
+    this.unsubscribeFromAuth = auth.onAuthStateChanged(async (userAuth) => {
+      if (!userAuth) {
+        this.setState({ currentUser: userAuth }); // userAuth is null here
+        return;
+      }
+      console.log("Authorization is working in App.js")
+      const userDocRef = await createUserProfileDocument(userAuth);
+      // const userDataSnapshot = await getDoc(userDocRef);
+      // this.setState({
+      //   currentUser: {
+      //     id: userDataSnapshot.id,
+      //     ...userDataSnapshot.data(),
+      //   },
+      // });
 
-      console.log(user);
-      console.log("State changed in componentDidUnmount");
+      console.log("State: ", this.state);
     });
   }
 
   render() {
     return (
-      <div onClick={this.logUserSubscription}>
+      <div>
         <Header currentUser={this.state.currentUser} />
         <Switch>
           <Route exact={true} path={"/"} component={HomePage}></Route>

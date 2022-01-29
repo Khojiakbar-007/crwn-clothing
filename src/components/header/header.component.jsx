@@ -9,7 +9,7 @@ const Header = (props) =>
 {
   const { currentUser } = props;
   // console.log(currentUser);
-  console.log("PROPS:", props);
+  // console.log("PROPS:", props);
 
   return (
   <div className="header">
