@@ -4,17 +4,7 @@ import { getAuth } from "firebase/auth";
 import { GoogleAuthProvider } from "firebase/auth";
 import { signInWithPopup } from "firebase/auth";
 
-import {
-  firestore,
-  getFirestore,
-  collection,
-  getDocs,
-  getDoc,
-  setDoc,
-  doc,
-  deleteDoc,
-} from "firebase/firestore";
-import { useRef } from "react";
+import { getFirestore, getDoc, setDoc, doc } from "firebase/firestore";
 
 const config = {
   apiKey: "AIzaSyCNSwSLO-yc3LcTGBlGCP95W-NJKK9kHuI",
@@ -30,9 +20,8 @@ export const firebaseApp = initializeApp(config);
 export const db = getFirestore();
 
 export const auth = getAuth(firebaseApp);
-
 export const provider = new GoogleAuthProvider(firebaseApp);
-// provider.addScope("https://www.googleapis.com/auth/contacts.readonly");
+
 provider.setCustomParameters({
   prompt: "select_account",
   login_hint: "user@example.com",
@@ -40,23 +29,9 @@ provider.setCustomParameters({
 
 export const signInWithGoogle = async function () {
   try {
-    const res = await signInWithPopup(auth, provider);
-    // console.log(res);
-
-    // const credential = GoogleAuthProvider.credentialFromResult(res);
-    // const token = credential.accessToken;
-    // const user = res.user;
-
-    // console.log(token, "\n", user);
-  } catch (error) {
-    const errorCode = error.code;
-    // const errorMessage = error.message;
-    // // The email of the user's account used.
-    // const email = error.email;
-    // // The AuthCredential type that was used.
-    // const credential = GoogleAuthProvider.credentialFromError(error);
-
-    console.log(new Error(errorCode));
+    await signInWithPopup(auth, provider);
+  } catch (err) {
+    console.log(new Error(err.code));
   }
 };
 
@@ -64,57 +39,31 @@ export const signInWithGoogle = async function () {
 
 export const createUserProfileDocument = async (userAuth, otherData) => {
   if (!userAuth) return;
-
   const docRef = doc(db, `users/${userAuth.uid}`);
   const snapShot = await getDoc(docRef);
-  console.log(
-    "Working",
-    snapShot,
-    snapShot.exists(),
-    "User Auth",
-    userAuth,
-    "\nUser auth user: ",
-    userAuth.user
-  );
 
   if (!snapShot.exists()) {
     const createdAt = new Date();
 
-    // const { displayName, email } = userAuth.user;
-    // let email = '';
-    // email = await userAuth.email;
-    // email = await userAuth.user?.email;
-    // console.log(
-    //   "User Auth: ",
-    //   userAuth /* "Display name: ", displayName,  "email: ", email*/
-    // );
-    // console.log("\n other data: ", otherData);
+    // BUG in firebase/firestore, "setDoc".
+    const userData = {
+      displayName:
+        userAuth?.displayName ||
+        otherData?.displayName ||
+        userAuth?.user?.displayName ||
+        null,
+      email: userAuth?.email || userAuth?.user?.email || null,
+      createdAt,
+      ...otherData,
+    };
+
     try {
-      await setDoc(
-        docRef,
-        {
-          displayName:
-            userAuth?.displayName ||
-            otherData?.displayName ||
-            userAuth?.user?.displayName ||
-            null,
-          email: userAuth?.email || userAuth?.user?.email || null,
-          createdAt,
-          ...otherData,
-        },
-        {
-          merge: true,
-        }
-      );
-      console.log("Document reference: ", docRef, "\n other data: ", otherData);
+      await setDoc(docRef, userData);
     } catch (error) {
       console.log(`Error creating user:`);
       console.log(error);
     }
   }
 
-  console.log("Working", snapShot, snapShot.exists());
-  return docRef;
+  return snapShot;
 };
-
-// 12:42

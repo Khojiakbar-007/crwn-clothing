@@ -7,9 +7,6 @@ import ShopPage from "./pages/shop/shop.component";
 import SignInAndSignUpPage from "./pages/sign-in-and-sign-up/sign-in-and-sign-up.component";
 import Header from "./components/header/header.component";
 import { auth, createUserProfileDocument } from "./firebase/firebase.utils";
-// import { createUserWithEmailAndPassword } from "firebase/auth";
-
-import { getDoc } from "firebase/firestore";
 
 import "./test";
 
@@ -30,17 +27,16 @@ class App extends React.Component {
         this.setState({ currentUser: userAuth }); // userAuth is null here
         return;
       }
-      console.log("Authorization is working in App.js")
-      const userDocRef = await createUserProfileDocument(userAuth);
-      // const userDataSnapshot = await getDoc(userDocRef);
-      // this.setState({
-      //   currentUser: {
-      //     id: userDataSnapshot.id,
-      //     ...userDataSnapshot.data(),
-      //   },
-      // });
 
-      console.log("State: ", this.state);
+      const userDataSnapshot = await createUserProfileDocument(userAuth);
+      this.setState({
+        currentUser: {
+          id: userDataSnapshot.id,
+          ...userDataSnapshot.data(),
+        },
+      });
+
+      // console.log("State: ", this.state);
     });
   }
 
