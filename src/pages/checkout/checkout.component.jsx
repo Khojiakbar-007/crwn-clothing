@@ -4,10 +4,11 @@ import { connect } from "react-redux";
 
 import CheckoutItem from "../../components/checkout-item/checkout-item.component";
 import { countTotalPrice } from "../../redux/cart/cart.selectors";
+import { removeItemFromCart } from "../../redux/cart/cart.actions";
 
 import "./checkout.styles.scss";
 
-const CheckoutPage = ({ cartItems, totalPrice }) => (
+const CheckoutPage = ({ cartItems, totalPrice, dispatch }) => (
   <div className="checkout-page">
     <ul className="checkout-header">
       <li className="header-block">
@@ -28,7 +29,11 @@ const CheckoutPage = ({ cartItems, totalPrice }) => (
     </ul>
 
     {cartItems.map((cartItem) => (
-      <CheckoutItem key={cartItem.id} cartItem={cartItem} />
+      <CheckoutItem
+        key={cartItem.id}
+        cartItem={cartItem}
+        removeCartItem={() => dispatch(removeItemFromCart(cartItem))}
+      />
     ))}
 
     <div className="total">
