@@ -1,5 +1,5 @@
 import React from "react";
-import { Route, Switch, Redirect } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 import { connect } from "react-redux";
 
 import HomePage from "./pages/homepage/homepage.component";
@@ -18,7 +18,7 @@ class App extends React.Component {
 
   componentDidMount() {
     const { setCurrentUser } = this.props;
-    console.log("Authorization is in process!");
+
     this.unsubscribeFromAuth = auth.onAuthStateChanged(async (userAuth) => {
       if (!userAuth) {
         setCurrentUser(userAuth); // userAuth is null here
@@ -37,25 +37,21 @@ class App extends React.Component {
     return (
       <div>
         <Header />
-        <Switch>
-          <Route exact={true} path={"/"} component={HomePage} />
+        <Routes>
+          <Route path="/" element={<HomePage />} />
 
-          <Route exact path={"/shop/"} component={ShopPage} />
+          <Route path="/shop/*" element={<ShopPage />} />
 
           <Route
-            exact
-            path={"/signin/"}
-            render={() =>
-              this.props.currentUser ? (
-                <Redirect to="/" />
-              ) : (
-                <SignInAndSignUpPage />
-              )
-            }
+            path="/signin"
+            element={<SignInAndSignUpPage currentUser={this.props.currentUser} />}
           />
+          {/* <Route path={"/signin/"}
+            render={() =>this.props.currentUser ? null : ( // <Redirect to="/" />
+                <SignInAndSignUpPage />)}/> */}
 
-          <Route exact path={"/checkout"} component={CheckoutPage} />
-        </Switch>
+          <Route path="/checkout" element={<CheckoutPage />} />
+        </Routes>
       </div>
     );
   }

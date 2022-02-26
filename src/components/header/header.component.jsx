@@ -11,9 +11,7 @@ import "./header.styles.scss";
 
 const Header = (props) => {
   const { currentUser, hidden: isCartHidden } = props;
-  // console.log(currentUser);
-  // console.log("PROPS:", props);
-
+  
   return (
     <div className="header">
       <Link to={"/"} className="logo-container">
@@ -24,7 +22,7 @@ const Header = (props) => {
         <Link to={"/shop/"} className="option">
           SHOP
         </Link>
-        <Link to={"/contact/"} className="option">
+        <Link to={"/shop/mens"} className="option">
           CONTACT
         </Link>
 
@@ -50,5 +48,6 @@ const mapStateToProps = ({ user: { currentUser }, cart: { hidden } }) => ({
   currentUser,
   hidden,
 });
+// const mapStateToProps = ({ user: { currentUser }, cart: { hidden } }) => ({
 
 export default connect(mapStateToProps)(Header);
